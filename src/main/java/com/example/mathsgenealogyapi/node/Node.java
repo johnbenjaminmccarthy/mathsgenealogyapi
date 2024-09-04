@@ -1,7 +1,7 @@
-package com.example.mathsgenealogyapi.entry;
+package com.example.mathsgenealogyapi.node;
 
+import com.example.mathsgenealogyapi.dissertation.Dissertation;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,40 +14,20 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @Setter
-@Table(name = "entries")
-public class Entry {
+@Table(name = "nodes")
+public class Node {
     @Id
-    private Long id; //The genealogy id
+    @GeneratedValue
+    private Long id; //Separate local id to store the case where a person has multiple PhD dissertations to record as separate entries in the database e.g. Leibniz https://genealogy.math.ndsu.nodak.edu/id.php?id=60985
+
+    @Column(name = "genealogyId")
+    private Long genealogyId; //The genealogy id on https://genealogy.math.ndsu.nodak.edu/
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "phdprefix")
-    private String phdprefix;
-
-    @Column(name = "university")
-    private String university;
-
-    @Column(name = "yearofcompletion")
-    private Integer yearofcompletion;
-
-    @Column(name = "dissertationtitle")
-    private String dissertationtitle;
-
-    @Column(name = "mscnumber")
-    private String mscnumber; //Mathematics Subject Classification number in MSC202
-
-    @Column(name = "advisor1name")
-    private String advisor1name;
-
-    @Column(name = "advisor1id")
-    private Long advisor1id;
-
-    @Column(name = "advisor2name")
-    private String advisor2name;
-
-    @Column(name = "advisor2id")
-    private Long advisor2id;
+    @OneToMany(mappedBy = "node")
+    private List<Dissertation> dissertations;
 
     @Column(name = "numberofdescendents")
     private Integer numberofdescendents;

@@ -1,8 +1,8 @@
-package com.example.mathsgenealogyapi.entry;
+package com.example.mathsgenealogyapi.node;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EntryRepository extends JpaRepository<Entry, Long> {
+public interface NodeRepository extends JpaRepository<Node, Long> {
 }
