@@ -13,10 +13,10 @@ import lombok.Setter;
 public class Edge {
 
     @Id
-    @Column(name="from")
-    private Long from;
+    @Column(name="fromid")
+    private Long fromid;
 
     @Id
-    @Column(name="to")
-    private Long to;
+    @Column(name="toid")
+    private Long toid;
 }

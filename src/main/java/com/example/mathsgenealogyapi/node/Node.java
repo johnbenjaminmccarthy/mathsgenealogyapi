@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 public class Node {
     @Id
     @GeneratedValue
-    private Long id; //Separate local id to store the case where a person has multiple PhD dissertations to record as separate entries in the database e.g. Leibniz https://genealogy.math.ndsu.nodak.edu/id.php?id=60985
+    private Integer id; //Separate local id to store the case where a person has multiple PhD dissertations to record as separate entries in the database e.g. Leibniz https://genealogy.math.ndsu.nodak.edu/id.php?id=60985
 
     @Column(name = "genealogyId")
-    private Long genealogyId; //The genealogy id on https://genealogy.math.ndsu.nodak.edu/
+    private Integer genealogyId; //The genealogy id on https://genealogy.math.ndsu.nodak.edu/
 
     @Column(name = "name")
     private String name;

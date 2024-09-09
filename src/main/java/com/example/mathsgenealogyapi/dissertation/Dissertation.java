@@ -12,7 +12,7 @@ import lombok.Setter;
 public class Dissertation {
     @Id
     @GeneratedValue
-    private Long id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "nodeid", nullable = false)
@@ -37,11 +37,11 @@ public class Dissertation {
     private String advisor1name;
 
     @Column(name = "advisor1id")
-    private Long advisor1id; //Maths genealogy id
+    private Integer advisor1id; //Maths genealogy id
 
     @Column(name = "advisor2name")
     private String advisor2name;
 
     @Column(name = "advisor2id")
-    private Long advisor2id; //Maths genealogy id
+    private Integer advisor2id; //Maths genealogy id
 }
