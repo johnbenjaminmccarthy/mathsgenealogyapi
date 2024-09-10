@@ -7,6 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 
 class NodeDoesNotExistException extends Exception { }
@@ -23,14 +25,17 @@ class NodeDoesNotExistException extends Exception { }
 @Service
 @Transactional
 public class NodeService {
-    @Autowired NodeRepository repository;
+    @Autowired
+    NodeRepository repository;
+    @Autowired
+    ConversionService conversionService;
 
     private Node forceUpdate(Integer id) {
         Node existingNode = repository.findById(id).get();
         try {
-            existingNode = scrapeEntry(id);
+            existingNode = scrapeEntry(id).get();
         }
-        catch (IOException | NodeDoesNotExistException e) {
+        catch (IOException e) {
             // scraping failed
         }
 
@@ -39,10 +44,10 @@ public class NodeService {
     }
 
     public Node test(Integer id) throws IOException, NodeDoesNotExistException {
-        return scrapeEntry(id);
+        return scrapeEntry(id).get();
     }
 
-    private Node scrapeEntry(Integer id) throws IOException, NodeDoesNotExistException {
+    private Optional<Node> scrapeEntry(Integer id) throws IOException {
         Node constructedNode = new Node();
         List<Dissertation> dissertations = new ArrayList();
         Dissertation newDissertation = new Dissertation();
@@ -51,10 +56,9 @@ public class NodeService {
         constructedNode.setDissertations(dissertations);
         newDissertation.setNode(constructedNode);
 
-
         Document webpage = Jsoup.connect("https://www.mathgenealogy.org/id.php?id=" + id).get();
         if (Objects.equals(webpage.html(), "<p>You have specified an ID that does not exist in the database. Please back up and try again.</p>")) {
-            throw new NodeDoesNotExistException();
+            return Optional.empty();
         }
 
         System.out.println("Downloaded webpage for id " + id);
@@ -131,16 +135,32 @@ public class NodeService {
         newDissertation.setMscnumber(mscnumber);
         constructedNode.setStudents(students);
 
-        return constructedNode;
+        return Optional.of(constructedNode);
     }
 
-    public Node getSingleNode(Integer id) {
-        Node requested = repository.findById(id).get();
-        if (requested.getLastupdated().isBefore(LocalDateTime.now().minusDays(Constants.daysToInvalidateCache))) {
-            return forceUpdate(id);
+    private Node addOrUpdateNode(Node newNode) {
+        return repository.save(newNode);
+    }
+
+    public NodeDto getSingleNode(Integer id) throws NodeDoesNotExistException, IOException {
+        Optional<Node> requested = repository.findById(id);
+        if (requested.isPresent() && requested.get().getLastupdated().isAfter(LocalDateTime.now().minusDays(Constants.daysToInvalidateCache))) {
+            return conversionService.convert(requested.get(), NodeDto.class);
         }
         else {
-            return requested;
+            Optional<Node> scrapedNode = scrapeEntry(id); //TODO: Update entry instead of creating new entry. scrapeEntry returns a *new* Node object instead of modifying the properties of the existing Node object from requested, if it exists.
+            if (scrapedNode.isEmpty()) {
+                if (requested.isEmpty()) {
+                    throw new NodeDoesNotExistException();
+                }
+                else {
+                    return conversionService.convert(requested.get(), NodeDto.class); //If scraping failed for some reason serve the existing node data
+                }
+            }
+            else {
+                return conversionService.convert(addOrUpdateNode(scrapedNode.get()), NodeDto.class);
+            }
         }
+
     }
 }

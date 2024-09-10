@@ -26,7 +26,7 @@ public class Node {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "node")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "node")
     private List<Dissertation> dissertations;
 
     @Column(name = "numberofdescendents")

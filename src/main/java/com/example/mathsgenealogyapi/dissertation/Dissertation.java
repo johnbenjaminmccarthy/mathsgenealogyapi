@@ -15,7 +15,7 @@ public class Dissertation {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "nodeid", nullable = false)
+    @JoinColumn(name = "node_id", nullable = false)
     private Node node;
 
     @Column(name = "phdprefix")
