@@ -5,7 +5,7 @@ plugins {
 	id("io.freefair.lombok") version "8.6"
 }
 
-group = "com.example"
+group = "com"
 version = "0.0.1-SNAPSHOT"
 
 java {
@@ -19,12 +19,20 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+
 	implementation("org.jsoup:jsoup:1.17.2")
 	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	implementation("org.apache.logging.log4j:log4j-api:2.20.0")
-	implementation("org.apache.logging.log4j:log4j-core:2.20.0")
+
 	testImplementation("org.testcontainers:postgresql:1.20.1")
+
+	implementation("org.springframework.boot:spring-boot-starter-log4j2")
+}
+
+configurations {
+	all {
+		exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
+	}
 }
 
 tasks.withType<Test> {
