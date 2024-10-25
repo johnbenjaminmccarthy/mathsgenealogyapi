@@ -25,6 +25,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 
 	testImplementation("org.testcontainers:postgresql:1.20.1")
+	testImplementation("org.testcontainers:junit-jupiter")
 
 	implementation("org.springframework.boot:spring-boot-starter-log4j2")
 }

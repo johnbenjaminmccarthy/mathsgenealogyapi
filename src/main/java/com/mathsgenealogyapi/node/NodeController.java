@@ -38,7 +38,7 @@ public class NodeController {
         }
         catch (IOException e) {
             logger.error("IOException from JSoup scraping at id " + id + " with message: \n" + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred during the scraping of data from the maths genealogy project and has been reported. Please try again later.");
         }
         catch (NodeDoesNotExistException e) {
             logger.info("Requested node " + id + " does not exist in the maths genealogy project so request failed with 404");
