@@ -3,15 +3,11 @@ package com.mathsgenealogyapi.node;
 import com.mathsgenealogyapi.util.MathsgenealogyapiPostgresqlContainer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.BeforeClass;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -19,7 +15,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,26 +77,18 @@ class NodeRepositoryTest {
         assertTrue(foundNode.isPresent());
     }
 
-    @Test
-    @Transactional
-    public void graphTest() {
-        List<Node> nodes = repository.getNodes(217413);
-        for (Node node: nodes) {
-            logger.info(node.getName());
-        }
-        assertTrue(true);
 
-    }
 
     @Test
     @Transactional
     public void graphTest2() {
-        List<Node> nodes = repository.getNodes(293462, 1,1);
-        for (Node node: nodes) {
-            logger.info(node.getName());
+        List<Object[]> nodes = repository.getNodes(293462, 1,1);
+        for (Object[] nodeWithGenerationsCount: nodes) {
+            Node node = (Node)nodeWithGenerationsCount[0];
+            Integer generationsCount = (Integer)nodeWithGenerationsCount[1];
+            logger.info(node.getName() + " " + generationsCount);
         }
         assertTrue(true);
-
     }
 
 

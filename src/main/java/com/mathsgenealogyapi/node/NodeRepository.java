@@ -1,6 +1,5 @@
 package com.mathsgenealogyapi.node;
 
-import com.mathsgenealogyapi.graph.Graph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -8,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
 
 @Repository
 public interface NodeRepository extends JpaRepository<Node, Integer> {
@@ -18,7 +18,7 @@ public interface NodeRepository extends JpaRepository<Node, Integer> {
                 .orElseGet(() -> this.save(node));
     }
 
-    @Query(value =
+    /*@Query(value =
             "WITH RECURSIVE\n" +
             "    descendents AS (\n" +
             "        SELECT edges.to_node_id, 1 AS generationsDown FROM edges WHERE edges.from_node_id = :baseId\n" +
@@ -34,15 +34,17 @@ public interface NodeRepository extends JpaRepository<Node, Integer> {
             "                                           JOIN ancestors ON edges.to_node_id = ancestors.from_node_id\n" +
                     "WHERE ancestors.generationsUp < :maxGenerationsUp\n" +
             "    )\n" +
-            "SELECT genealogy_id, lastupdated, name, numberofdescendents, scraped, -generationsDown AS generationsCount FROM nodes JOIN descendents ON nodes.genealogy_id = descendents.to_node_id\n" +
-            "UNION SELECT genealogy_id, lastupdated, name, numberofdescendents, scraped, generationsUp AS generationsCount FROM nodes JOIN ancestors ON nodes.genealogy_id = ancestors.from_node_id\n" +
-            "UNION SELECT genealogy_id, lastupdated, name, numberofdescendents, scraped, 0 AS generationsCount FROM nodes WHERE nodes.genealogy_id = :baseId"
+            "SELECT genealogy_id, lastupdated, name, numberofdescendents, scraped, -generationsDown AS generationscount FROM nodes JOIN descendents ON nodes.genealogy_id = descendents.to_node_id\n" +
+            "UNION SELECT genealogy_id, lastupdated, name, numberofdescendents, scraped, generationsUp AS generationscount FROM nodes JOIN ancestors ON nodes.genealogy_id = ancestors.from_node_id\n" +
+            "UNION SELECT genealogy_id, lastupdated, name, numberofdescendents, scraped, 0 AS generationscount FROM nodes WHERE nodes.genealogy_id = :baseId"
             , nativeQuery = true)
-    List<Node> getNodes(@Param("baseId") Integer base, @Param("maxGenerationsDown") Integer maxGenerationsDown, @Param("maxGenerationsUp") Integer maxGenerationsUp);
+    List<Node> getNodes(@Param("baseId") Integer base, @Param("maxGenerationsDown") Integer maxGenerationsDown, @Param("maxGenerationsUp") Integer maxGenerationsUp);*/
 
-    default List<Node> getNodes(Integer base) {
+    List<Object[]> getNodes(@Param("baseId") Integer base, @Param("maxGenerationsDown") Integer maxGenerationsDown, @Param("maxGenerationsUp") Integer maxGenerationsUp);
+    default List<Object[]> getNodes(Integer base) {
         return getNodes(base, 5, 5);
     }
 
-    Graph getGraph(Integer id, Integer maxGenerationsUp, Integer maxGenerationsDown);
+
+    //Graph getGraph(Integer id, Integer maxGenerationsUp, Integer maxGenerationsDown);
 }
