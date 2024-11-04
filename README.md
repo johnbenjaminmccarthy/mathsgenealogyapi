@@ -4,7 +4,7 @@ This is an API which accesses the [Mathematics Genealogy Project](https://www.ma
 
 ------------------
 
-Spring, Spring Boot, Hibernate, Postgres, Docker, Docker Compose, Gradle, Log4j2, Testcontroller, Jsoup
+Spring, Spring Boot, Hibernate, Postgres, Docker, Docker Compose, Gradle, Log4j2, Jsoup, Testcontroller for integration testing with PostgreSQL for native recursive queries
 
 ------------------
 
