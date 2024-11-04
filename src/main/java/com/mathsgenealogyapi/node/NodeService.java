@@ -3,6 +3,7 @@ package com.mathsgenealogyapi.node;
 import com.mathsgenealogyapi.Constants;
 import com.mathsgenealogyapi.NodeDoesNotExistException;
 import com.mathsgenealogyapi.dissertation.Dissertation;
+import com.mathsgenealogyapi.dissertation.DissertationRepository;
 import com.mathsgenealogyapi.edge.Edge;
 import com.mathsgenealogyapi.scraper.ScrapedDissertationData;
 import com.mathsgenealogyapi.scraper.ScrapedNodeData;
@@ -26,7 +27,9 @@ import java.util.Optional;
 @Transactional
 public class NodeService {
     @Autowired
-    NodeRepository repository;
+    NodeRepository nodeRepository;
+    @Autowired
+    DissertationRepository dissertationRepository;
     @Autowired
     ConversionService conversionService;
 
@@ -107,11 +110,12 @@ public class NodeService {
     }
 
     private Node getOrCreateNode(Integer id, String name) {
-        return repository.getOrInsert(new Node(id, name));
+        return nodeRepository.getOrInsert(new Node(id, name));
     }
 
     public Node addOrUpdateNode(Node newNode) {
-        return repository.saveAndLog(newNode, "addOrUpdate");
+        dissertationRepository.deleteDissertationsWithNodeId(newNode.getId()); //Clean up old dissertations in the database for this node before potentially updating it
+        return nodeRepository.saveAndLog(newNode, "addOrUpdate");
     }
 
     static public Boolean isOutOfDate(LocalDateTime lastUpdated) {
@@ -122,10 +126,10 @@ public class NodeService {
         return !node.getScraped() || isOutOfDate(node.getLastupdated());
     }
 
-    public NodeDto getSingleNode(Integer id) throws NodeDoesNotExistException, IOException {
-        Optional<Node> requested = repository.findById(id);
+    public NodeDto getSingleNode(Integer id, Boolean forceupdate) throws NodeDoesNotExistException, IOException {
+        Optional<Node> requested = nodeRepository.findById(id);
 
-        if (requested.isEmpty() || !requested.get().getScraped() || requested.get().getLastupdated().isBefore(LocalDateTime.now().minusDays(Constants.daysToInvalidateCache))) {
+        if (forceupdate || requested.isEmpty() || NodeService.needsToBeScraped(requested.get())) {
             if (requested.isEmpty()) {
                 logger.info("Node " + id + " was requested and didn't exist in database so was scraped");
             }
@@ -133,6 +137,7 @@ public class NodeService {
                 logger.info("Node " + id + " was requested but was out of date or has not been scraped yet and was rescraped");
             }
             Node scrapedNode = scrapeNode(id);
+
             return conversionService.convert(addOrUpdateNode(scrapedNode), NodeDto.class);
         }
         else {

@@ -12,29 +12,22 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/nodes")
+@RequestMapping("/api/node")
 public class NodeController {
 
     @Autowired NodeService service;
 
     private static final Logger logger = LogManager.getLogger(NodeController.class);
 
-    @GetMapping("")
-    public String getTestMessage() {
-        return "Hello World!";
-    }
-
-    @GetMapping("/test/{id}")
-    public String testGetMapping(@PathVariable Integer id) {
-        return id.toString();
-    }
-
-    @GetMapping("/node/{id}")
-    public ResponseEntity<NodeDto> getEntryById(@PathVariable Integer id) {
-        logger.info("Received request for single node " + id);
+    @GetMapping()
+    public ResponseEntity<NodeDto> getEntryById(
+            @RequestParam Integer id,
+            @RequestParam(defaultValue = "false") Boolean forceupdate
+            ) {
+        logger.info("Received request for single node " + id + (forceupdate == true ? " with forced rescraping." : "."));
         try {
             return ResponseEntity.ok()
-                    .body(service.getSingleNode(id));
+                    .body(service.getSingleNode(id, forceupdate));
         }
         catch (IOException e) {
             logger.error("IOException from JSoup scraping at id " + id + " with message: \n" + e.getMessage());

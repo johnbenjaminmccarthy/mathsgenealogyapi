@@ -1,6 +1,7 @@
 package com.mathsgenealogyapi.graph;
 
 import com.mathsgenealogyapi.NodeDoesNotExistException;
+import com.mathsgenealogyapi.dissertation.DissertationRepository;
 import com.mathsgenealogyapi.edge.Edge;
 import com.mathsgenealogyapi.node.Node;
 import com.mathsgenealogyapi.node.NodeRepository;
@@ -57,6 +58,7 @@ public class GraphService {
                     logger.info("Advisor " + advisorEdge.getFromNode().getName() + " was not already in list. Scraping...");
                     if (NodeService.needsToBeScraped(advisorEdge.getFromNode())) {
                         Node scrapedNode = nodeService.scrapeNode(advisorEdge.getFromNode().getId());
+
                         nodeService.addOrUpdateNode(scrapedNode);
                         advisorNodes.add(scrapedNode);
                         alreadyFoundNodes.add(scrapedNode.getId());
@@ -78,6 +80,7 @@ public class GraphService {
                 if (!alreadyFoundNodes.contains(studentEdge.getToNode().getId())) {
                     if (NodeService.needsToBeScraped(studentEdge.getToNode())) {
                         Node scrapedNode = nodeService.scrapeNode(studentEdge.getToNode().getId());
+
                         nodeService.addOrUpdateNode(scrapedNode);
                         studentNodes.add(scrapedNode);
                         alreadyFoundNodes.add(scrapedNode.getId());
