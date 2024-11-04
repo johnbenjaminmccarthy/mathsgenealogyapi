@@ -8,7 +8,7 @@ Spring Boot, Hibernate, Postgres, Docker, Docker Compose, Gradle, Log4j2, Testco
 
 ------------------
 
-The API responds to a GET request for a family tree centred at some person by recursively scraping and caching in a database the information of ancestors and descendents to that person from the genealogy project. Future requests for trees which intersect with already retrieved nodes on the tree will only be rescraped after 30 days. Individual nodes on the graph can be force-rescraped by a GET request to `/api/node` with `forceupdate=true`.
+The API responds to a GET request for a family tree centred at some person by recursively scraping and caching in a database the information of ancestors and descendents to that person from the genealogy project. Future requests for trees which intersect with already retrieved nodes on the tree will only rescrape those nodes after 30 days. Individual nodes on the graph can be force-rescraped by a GET request to `/api/node` with `forceupdate=true`.
 
 ------------------
 To run in a docker container:
