@@ -31,7 +31,7 @@ public class Dissertation {
     private String university;
 
     @Column(name = "yearofcompletion")
-    private Integer yearofcompletion;
+    private String yearofcompletion;
 
     @Column(name = "dissertationtitle")
     private String dissertationtitle;

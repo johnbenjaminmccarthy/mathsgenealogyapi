@@ -13,10 +13,10 @@ public class DissertationDtoConverter implements Converter<Dissertation, Dissert
                 from.getYearofcompletion(),
                 from.getDissertationtitle(),
                 from.getMscnumber(),
-                from.getAdvisor1edge().getFromNode().getId(),
-                from.getAdvisor1edge().getFromNode().getName(),
-                from.getAdvisor2edge().getFromNode().getId(),
-                from.getAdvisor2edge().getFromNode().getName()
+                from.getAdvisor1edge() != null ? from.getAdvisor1edge().getFromNode().getId() : null,
+                from.getAdvisor1edge() != null ? from.getAdvisor1edge().getFromNode().getName() : null,
+                from.getAdvisor2edge() != null ? from.getAdvisor2edge().getFromNode().getId() : null,
+                from.getAdvisor2edge() != null ? from.getAdvisor2edge().getFromNode().getName() : null
         );
     }
 }

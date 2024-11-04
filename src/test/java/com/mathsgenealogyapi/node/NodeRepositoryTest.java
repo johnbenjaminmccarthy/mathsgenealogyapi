@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.util.Pair;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -82,10 +83,10 @@ class NodeRepositoryTest {
     @Test
     @Transactional
     public void graphTest2() {
-        List<Object[]> nodes = repository.getNodes(293462, 1,1);
-        for (Object[] nodeWithGenerationsCount: nodes) {
-            Node node = (Node)nodeWithGenerationsCount[0];
-            Integer generationsCount = (Integer)nodeWithGenerationsCount[1];
+        List<Pair<Node, Integer>> nodes = repository.getNodes(293462, 1,1);
+        for (Pair<Node, Integer> nodeWithGenerationsCount: nodes) {
+            Node node = nodeWithGenerationsCount.getFirst();
+            Integer generationsCount = nodeWithGenerationsCount.getSecond();
             logger.info(node.getName() + " " + generationsCount);
         }
         assertTrue(true);

@@ -23,6 +23,8 @@ public class GraphDtoConverter implements Converter<Graph, GraphDto> {
                 from.getBase(),
                 from.getGenerationsUp(),
                 from.getGenerationsDown(),
+                from.getNumberOfNodes(),
+                from.getNumberOfEdges(),
                 from.getNodes().stream().map(it -> conversionService.convert(it, NodeDto.class)).collect(Collectors.toList()),
                 from.getEdges().stream().map(it -> conversionService.convert(it, EdgeDto.class)).collect(Collectors.toList())
         );

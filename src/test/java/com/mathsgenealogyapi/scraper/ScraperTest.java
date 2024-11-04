@@ -107,4 +107,9 @@ class ScraperTest {
         assertEquals("Abu Abdallah Al-Husayn ibn Ibrahim al-Natili", alHusayn.dissertations().get(0).advisor1name());
         assertEquals("Abu Sahl 'Isa ibn Yahya al-Masihi", alHusayn.dissertations().get(0).advisor2name());
     }
+
+    @Test
+    void scrapeCayley_shouldHaveYearWithSlashes() throws IOException, NodeDoesNotExistException {
+        ScrapedNodeData Cayley = Scraper.scrapeNode(7824);
+    }
 }

@@ -34,7 +34,7 @@ public class GraphController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Maximum number of generations up the tree must be greater than or equal to 0.");
         }
         if (maxGenerationsDown < 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Maximum number of generations down the tree must be greather than or equal to 0.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Maximum number of generations down the tree must be greater than or equal to 0.");
         }
         logger.info("Received request for graph with base node " + id + " going " + maxGenerationsUp + " generations up and " + maxGenerationsDown + " generations down.");
         try {

@@ -39,7 +39,7 @@ public class NodeService {
 
 
     // Turns ScrapedNodeData into a collection of Node, Edge, and Dissertation to be persisted to the database
-    private Node scrapeNode(Integer id) throws IOException, NodeDoesNotExistException {
+    public Node scrapeNode(Integer id) throws IOException, NodeDoesNotExistException {
         ScrapedNodeData scrapedNode = Scraper.scrapeNode(id);
 
         Node node = new Node(id);
@@ -56,32 +56,40 @@ public class NodeService {
         node.setAdvisorEdges(advisorEdges);
 
         for (ScrapedDissertationData dissertationData : scrapedNode.dissertations()) {
-            Node advisor1Node = getOrCreateNode(dissertationData.advisor1id(), dissertationData.advisor1name());
-            logger.debug(advisor1Node.toString());
-            Node advisor2Node = getOrCreateNode(dissertationData.advisor2id(), dissertationData.advisor2name());
-            logger.debug(advisor2Node.toString());
-
-            Edge advisor1Edge = new Edge(advisor1Node, node);
-            Edge advisor2Edge = new Edge(advisor2Node, node);
-            logger.debug("Advisor 1 edge: " + advisor1Edge.getFromNode().getId());
-
             Dissertation dissertation = new Dissertation();
             dissertation.setNode(node);
+
+
+            Node advisor1Node = null;
+            Edge advisor1Edge = null;
+            if (dissertationData.advisor1id() != null) {
+                //logger.debug("Getting or creating node for advisor 1: " + dissertationData.advisor1name() + " with id " + dissertationData.advisor1id());
+                advisor1Node = getOrCreateNode(dissertationData.advisor1id(), dissertationData.advisor1name());
+                advisor1Edge = new Edge(advisor1Node, node);
+                dissertation.setAdvisor1edge(advisor1Edge);
+                advisorEdges.add(advisor1Edge);
+                dissertation.setAdvisor1_id(dissertationData.advisor1id());
+            }
+
+
+            Node advisor2Node = null;
+            Edge advisor2Edge = null;
+            if (dissertationData.advisor2id() != null) {
+                //logger.debug("Getting or creating node for advisor 2: " + dissertationData.advisor2name() + " with id " + dissertationData.advisor2id());
+                advisor2Node = getOrCreateNode(dissertationData.advisor2id(), dissertationData.advisor2name());
+                advisor2Edge = new Edge(advisor2Node, node);
+                dissertation.setAdvisor2edge(advisor2Edge);
+                advisorEdges.add(advisor2Edge);
+                dissertation.setAdvisor2_id(dissertationData.advisor2id());
+            }
+
+
             dissertation.setPhdprefix(dissertationData.phdprefix());
             dissertation.setUniversity(dissertationData.university());
             dissertation.setYearofcompletion(dissertationData.yearofcompletion());
             dissertation.setDissertationtitle(dissertationData.dissertationtitle());
             dissertation.setMscnumber(dissertationData.mscnumber());
 
-            dissertation.setAdvisor1_id(dissertationData.advisor1id());
-            dissertation.setAdvisor2_id(dissertationData.advisor2id());
-
-            dissertation.setAdvisor1edge(advisor1Edge);
-            dissertation.setAdvisor2edge(advisor2Edge);
-
-            advisorEdges.add(advisor1Edge);
-            logger.debug("Advisor 1 edge after adding:" + dissertation.getAdvisor1edge().getFromNode().getId());
-            advisorEdges.add(advisor2Edge);
 
             dissertations.add(dissertation);
         }
@@ -99,13 +107,19 @@ public class NodeService {
     }
 
     private Node getOrCreateNode(Integer id, String name) {
-        logger.info("Getting or inserting node " + id);
         return repository.getOrInsert(new Node(id, name));
     }
 
-    private Node addOrUpdateNode(Node newNode) {
-        logger.info("Adding or updating node " + newNode.getId());
-        return repository.save(newNode);
+    public Node addOrUpdateNode(Node newNode) {
+        return repository.saveAndLog(newNode, "addOrUpdate");
+    }
+
+    static public Boolean isOutOfDate(LocalDateTime lastUpdated) {
+        return lastUpdated.isBefore(LocalDateTime.now().minusDays(Constants.daysToInvalidateCache));
+    }
+
+    static public Boolean needsToBeScraped(Node node) {
+        return !node.getScraped() || isOutOfDate(node.getLastupdated());
     }
 
     public NodeDto getSingleNode(Integer id) throws NodeDoesNotExistException, IOException {

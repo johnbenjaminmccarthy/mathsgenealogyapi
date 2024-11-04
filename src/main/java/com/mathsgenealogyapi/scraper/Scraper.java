@@ -68,12 +68,12 @@ public class Scraper {
             }
 
             String yearofcompletionStr = content.child(i).child(0).textNodes().get(1).text().trim();
-            Integer yearofcompletion;
+            String yearofcompletion;
             if (yearofcompletionStr.isEmpty()) {
                 yearofcompletion = null;
             }
             else {
-                yearofcompletion = Integer.valueOf(yearofcompletionStr);
+                yearofcompletion = yearofcompletionStr;
             }
 
             i++;
@@ -143,11 +143,7 @@ public class Scraper {
 
                 String studentUniversity = element.getElementsByTag("td").get(1).text();
 
-                Integer studentYearofcompletion = null;
-                String studentYearofcompletionStr = element.getElementsByTag("td").get(2).text();
-                if (!Objects.equals(studentYearofcompletionStr, "")) {
-                    studentYearofcompletion = Integer.valueOf(studentYearofcompletionStr);
-                }
+                String studentYearofcompletion = element.getElementsByTag("td").get(2).text();
 
                 Integer studentNumberofdescendents = null;
                 String studentNumberofdescendentsStr = element.getElementsByTag("td").get(3).text();

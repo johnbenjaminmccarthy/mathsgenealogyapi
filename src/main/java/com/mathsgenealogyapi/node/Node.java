@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 
 @NamedNativeQuery(
-        name="Node.getNodes",
+        name="Node.getNodesRaw",
         resultSetMapping = "NodesMapping",
         query="WITH RECURSIVE\n" +
                 "    descendents AS (\n" +

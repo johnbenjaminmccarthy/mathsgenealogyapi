@@ -19,6 +19,10 @@ public class Graph {
     List<Node> nodes;
     List<Edge> edges;
 
+    public Integer getNumberOfNodes() { return nodes.size(); }
+
+    public Integer getNumberOfEdges() { return edges.size(); }
+
 
     public Integer getGenerationsUp() {
         return 0;

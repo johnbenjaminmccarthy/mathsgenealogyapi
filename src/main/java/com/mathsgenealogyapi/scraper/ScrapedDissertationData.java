@@ -10,7 +10,7 @@ public record ScrapedDissertationData (
     String studentName,
     String phdprefix,
     String university,
-    Integer yearofcompletion,
+    String yearofcompletion,
     String dissertationtitle,
     String mscnumber,
     String advisor1name,
