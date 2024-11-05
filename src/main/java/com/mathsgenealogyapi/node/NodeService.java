@@ -75,6 +75,8 @@ public class NodeService {
                 advisor.setName(advisorData.name());
                 advisor.setAdvisorNumber(advisorData.advisorNumber());
 
+                advisorEdges.add(advisorEdge);
+
                 advisors.add(advisor);
             }
 
