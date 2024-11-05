@@ -1,5 +1,6 @@
 package com.mathsgenealogyapi;
 
+import com.mathsgenealogyapi.advisor.AdvisorDtoConverter;
 import com.mathsgenealogyapi.dissertation.DissertationDtoConverter;
 import com.mathsgenealogyapi.graph.GraphDtoConverter;
 import com.mathsgenealogyapi.node.NodeDtoConverter;
@@ -26,6 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addConverter(nodeDtoConverter());
         registry.addConverter(dissertationDtoConverter());
         registry.addConverter(graphDtoConverter());
+        registry.addConverter(advisorDtoConverter());
     }
 
     @Bean
@@ -35,9 +37,16 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public DissertationDtoConverter dissertationDtoConverter() {
-        return new DissertationDtoConverter();
+        return new DissertationDtoConverter(conversionService);
     }
 
     @Bean
-    public GraphDtoConverter graphDtoConverter() { return new GraphDtoConverter(conversionService); }
+    public AdvisorDtoConverter advisorDtoConverter() {
+        return new AdvisorDtoConverter();
+    }
+
+    @Bean
+    public GraphDtoConverter graphDtoConverter() {
+        return new GraphDtoConverter(conversionService);
+    }
 }

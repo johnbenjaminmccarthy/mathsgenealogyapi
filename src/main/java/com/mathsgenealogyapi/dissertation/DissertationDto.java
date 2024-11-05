@@ -1,6 +1,9 @@
 package com.mathsgenealogyapi.dissertation;
 
+import com.mathsgenealogyapi.advisor.AdvisorDto;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * DTO for {@link Dissertation}
@@ -12,9 +15,6 @@ public record DissertationDto(Integer nodeId,
                               String yearofcompletion,
                               String dissertationtitle,
                               String mscnumber,
-                              Integer advisor1edgeFromNodeId,
-                              String advisor1edgeFromNodeName,
-                              Integer advisor2edgeFromNodeId,
-                              String advisor2edgeFromNodeName
+                              List<AdvisorDto> advisors
 ) implements Serializable {
 }

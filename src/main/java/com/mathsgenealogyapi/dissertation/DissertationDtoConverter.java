@@ -1,8 +1,17 @@
 package com.mathsgenealogyapi.dissertation;
 
+import com.mathsgenealogyapi.advisor.AdvisorDto;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
 
+import java.util.stream.Collectors;
+
 public class DissertationDtoConverter implements Converter<Dissertation, DissertationDto> {
+
+    ConversionService conversionService;
+
+    public DissertationDtoConverter(ConversionService conversionService) { this.conversionService = conversionService; }
+
     @Override
     public DissertationDto convert(Dissertation from) {
         return new DissertationDto(
@@ -13,10 +22,7 @@ public class DissertationDtoConverter implements Converter<Dissertation, Dissert
                 from.getYearofcompletion(),
                 from.getDissertationtitle(),
                 from.getMscnumber(),
-                from.getAdvisor1edge() != null ? from.getAdvisor1edge().getFromNode().getId() : null,
-                from.getAdvisor1edge() != null ? from.getAdvisor1edge().getFromNode().getName() : null,
-                from.getAdvisor2edge() != null ? from.getAdvisor2edge().getFromNode().getId() : null,
-                from.getAdvisor2edge() != null ? from.getAdvisor2edge().getFromNode().getName() : null
+                from.getAdvisors().stream().map(it -> conversionService.convert(it, AdvisorDto.class)).collect(Collectors.toList())
         );
     }
 }

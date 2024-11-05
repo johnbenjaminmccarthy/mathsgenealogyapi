@@ -2,13 +2,11 @@ package com.mathsgenealogyapi.node;
 
 import com.mathsgenealogyapi.Constants;
 import com.mathsgenealogyapi.NodeDoesNotExistException;
+import com.mathsgenealogyapi.advisor.Advisor;
 import com.mathsgenealogyapi.dissertation.Dissertation;
 import com.mathsgenealogyapi.dissertation.DissertationRepository;
 import com.mathsgenealogyapi.edge.Edge;
-import com.mathsgenealogyapi.scraper.ScrapedDissertationData;
-import com.mathsgenealogyapi.scraper.ScrapedNodeData;
-import com.mathsgenealogyapi.scraper.ScrapedStudentData;
-import com.mathsgenealogyapi.scraper.Scraper;
+import com.mathsgenealogyapi.scraper.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,8 @@ public class NodeService {
     DissertationRepository dissertationRepository;
     @Autowired
     ConversionService conversionService;
+    @Autowired
+    Scraper scraper;
 
     private static final Logger logger = LogManager.getLogger(NodeService.class);
 
@@ -43,7 +43,7 @@ public class NodeService {
 
     // Turns ScrapedNodeData into a collection of Node, Edge, and Dissertation to be persisted to the database
     public Node scrapeNode(Integer id) throws IOException, NodeDoesNotExistException {
-        ScrapedNodeData scrapedNode = Scraper.scrapeNode(id);
+        ScrapedNodeData scrapedNode = scraper.scrapeNode(id);
 
         Node node = new Node(id);
 
@@ -62,29 +62,22 @@ public class NodeService {
             Dissertation dissertation = new Dissertation();
             dissertation.setNode(node);
 
+            List<Advisor> advisors = new ArrayList<>();
+            dissertation.setAdvisors(advisors);
 
-            Node advisor1Node = null;
-            Edge advisor1Edge = null;
-            if (dissertationData.advisor1id() != null) {
-                //logger.debug("Getting or creating node for advisor 1: " + dissertationData.advisor1name() + " with id " + dissertationData.advisor1id());
-                advisor1Node = getOrCreateNode(dissertationData.advisor1id(), dissertationData.advisor1name());
-                advisor1Edge = new Edge(advisor1Node, node);
-                dissertation.setAdvisor1edge(advisor1Edge);
-                advisorEdges.add(advisor1Edge);
-                dissertation.setAdvisor1_id(dissertationData.advisor1id());
+            for (ScrapedAdvisorData advisorData : dissertationData.advisors()) {
+                Advisor advisor = new Advisor();
+                Node advisorNode = getOrCreateNode(advisorData.advisorId(), advisorData.name());
+                Edge advisorEdge = new Edge(advisorNode, node);
+
+                advisor.setDissertation(dissertation);
+                advisor.setAdvisorEdge(advisorEdge);
+                advisor.setName(advisorData.name());
+                advisor.setAdvisorNumber(advisorData.advisorNumber());
+
+                advisors.add(advisor);
             }
 
-
-            Node advisor2Node = null;
-            Edge advisor2Edge = null;
-            if (dissertationData.advisor2id() != null) {
-                //logger.debug("Getting or creating node for advisor 2: " + dissertationData.advisor2name() + " with id " + dissertationData.advisor2id());
-                advisor2Node = getOrCreateNode(dissertationData.advisor2id(), dissertationData.advisor2name());
-                advisor2Edge = new Edge(advisor2Node, node);
-                dissertation.setAdvisor2edge(advisor2Edge);
-                advisorEdges.add(advisor2Edge);
-                dissertation.setAdvisor2_id(dissertationData.advisor2id());
-            }
 
 
             dissertation.setPhdprefix(dissertationData.phdprefix());
@@ -114,6 +107,7 @@ public class NodeService {
     }
 
     public Node addOrUpdateNode(Node newNode) {
+
         dissertationRepository.deleteDissertationsWithNodeId(newNode.getId()); //Clean up old dissertations in the database for this node before potentially updating it
         return nodeRepository.saveAndLog(newNode, "addOrUpdate");
     }

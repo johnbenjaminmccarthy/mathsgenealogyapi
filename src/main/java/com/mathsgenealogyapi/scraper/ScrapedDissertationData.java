@@ -4,6 +4,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 
 public record ScrapedDissertationData (
     Integer studentId,
@@ -13,10 +17,15 @@ public record ScrapedDissertationData (
     String yearofcompletion,
     String dissertationtitle,
     String mscnumber,
-    String advisor1name,
-    Integer advisor1id,
-    String advisor2name,
-    Integer advisor2id
+    List<ScrapedAdvisorData> advisors
 ) {
-    
+
+    Optional<ScrapedAdvisorData> getAdvisorByNumber(Integer number) {
+        for (ScrapedAdvisorData advisor : advisors) {
+            if (Objects.equals(advisor.advisorNumber(), number)) {
+                return Optional.of(advisor);
+            }
+        }
+        return Optional.empty();
+    }
 }

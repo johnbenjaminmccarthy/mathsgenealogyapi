@@ -12,8 +12,12 @@ INSERT INTO edges (from_node_id, to_node_id) VALUES
          (93925, 217413),
          (36909, 93925);
 
-INSERT INTO dissertations (advisor1_id, advisor2_id, dissertationtitle, mscnumber, phdprefix, university, yearofcompletion, node_id) VALUES
-        (36909,217413,'Stability conditions and canonical metrics','53','Ph.D.','Imperial College London',2023,293462);
+INSERT INTO dissertations (id, dissertationtitle, mscnumber, phdprefix, university, yearofcompletion, node_id) VALUES
+        (1, 'Stability conditions and canonical metrics','53','Ph.D.','Imperial College London','2023',293462);
+
+INSERT INTO advisors (dissertation_id, advisor_edge_from_node_id, advisor_edge_to_node_id, name, advisor_number) VALUES
+        (1, 36909, 293462, 'Simon Kirwan Donaldson', 1),
+        (1, 217413, 293462, 'Ruadhaí Dervan', 2);
 
 
 

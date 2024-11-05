@@ -15,22 +15,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+
+
 @Service
 public class Scraper {
 
     private static final Logger logger = LogManager.getLogger(Scraper.class);
 
 
-
-    private Scraper() {
-
-    }
-
-    static public ScrapedNodeData scrapeNode(Integer id) throws NodeDoesNotExistException, IOException {
-
-
+    public Document getDocument(Integer id) throws IOException {
         Document webpage = Jsoup.connect("https://www.mathgenealogy.org/id.php?id=" + id).get();
         logger.info("Downloaded webpage for id " + id);
+        return webpage;
+    }
+
+    public ScrapedNodeData scrapeNode(Integer id) throws NodeDoesNotExistException, IOException {
+
+        Document webpage = getDocument(id);
+
 
         if (Objects.equals(webpage.html(), "<html>\n" +
                 " <head></head>\n" +
@@ -89,19 +91,17 @@ public class Scraper {
                 mscnumber = content.child(i).text().split(" ")[3].split("—")[0];
                 i++;
             }
-            String advisor1name = null;
-            Integer advisor1id = null;
-            String advisor2name = null;
-            Integer advisor2id = null;
-            if (content.child(i).childrenSize() >= 1) {
-                Element advisor1 = content.child(i).child(0);
-                advisor1name = advisor1.text().trim();
-                advisor1id = Integer.valueOf(advisor1.attribute("href").getValue().split("=")[1]);
-            }
-            if (content.child(i).childrenSize() >= 3) {
-                Element advisor2 = content.child(i).child(2);
-                advisor2name = advisor2.text().trim();
-                advisor2id = Integer.valueOf(advisor2.attribute("href").getValue().split("=")[1]);
+
+            List<ScrapedAdvisorData> advisors = new ArrayList<>();
+
+            Integer j = 0;
+            while (j+1 <= content.child(i).childrenSize()) {
+                Element advisor = content.child(i).child(j);
+                String advisorName = advisor.text().trim();
+                Integer advisorId = Integer.valueOf(advisor.attribute("href").getValue().split("=")[1]);
+                Integer advisorNumber = j/2 + 1;
+                advisors.add(new ScrapedAdvisorData(advisorId, advisorName, advisorNumber));
+                j += 2;
             }
 
 
@@ -113,11 +113,7 @@ public class Scraper {
                     yearofcompletion,
                     dissertationtitle,
                     mscnumber,
-                    advisor1name,
-                    advisor1id,
-                    advisor2name,
-                    advisor2id
-
+                    advisors
             );
 
             dissertations.add(dissertation);
