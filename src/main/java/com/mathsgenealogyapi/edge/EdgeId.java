@@ -1,6 +1,7 @@
 package com.mathsgenealogyapi.edge;
 
 import com.mathsgenealogyapi.node.Node;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,27 +11,22 @@ import java.util.Objects;
 
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class EdgeId implements Serializable {
     private Node fromNode;
     private Node toNode;
 
-    public EdgeId(Node fromNode, Node toNode) {
-        this.fromNode = fromNode;
-        this.toNode = toNode;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
         }
-        else if (!(obj instanceof Edge)) {
+        else if (!(obj instanceof Edge ob)) {
             return false;
         }
         else {
-            Edge ob = (Edge) obj;
             return (Objects.equals(ob.getFromNode().getId(), this.getFromNode().getId())) && (Objects.equals(ob.getToNode().getId(), this.getToNode().getId()));
         }
     }

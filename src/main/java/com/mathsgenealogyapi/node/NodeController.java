@@ -3,7 +3,6 @@ package com.mathsgenealogyapi.node;
 import com.mathsgenealogyapi.NodeDoesNotExistException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +14,20 @@ import java.io.IOException;
 @RequestMapping("/api/node")
 public class NodeController {
 
-    @Autowired NodeService service;
+    final NodeService service;
 
     private static final Logger logger = LogManager.getLogger(NodeController.class);
+
+    public NodeController(NodeService service) {
+        this.service = service;
+    }
 
     @GetMapping()
     public ResponseEntity<NodeDto> getEntryById(
             @RequestParam Integer id,
             @RequestParam(defaultValue = "false") Boolean forceupdate
             ) {
-        logger.info("Received request for single node " + id + (forceupdate == true ? " with forced rescraping." : "."));
+        logger.info("Received request for single node " + id + (forceupdate ? " with forced rescraping." : "."));
         try {
             return ResponseEntity.ok()
                     .body(service.getSingleNode(id, forceupdate));

@@ -34,12 +34,13 @@ public class Scraper {
         Document webpage = getDocument(id);
 
 
-        if (Objects.equals(webpage.html(), "<html>\n" +
-                " <head></head>\n" +
-                " <body>\n" +
-                "  <p>You have specified an ID that does not exist in the database. Please back up and try again.</p>\n" +
-                " </body>\n" +
-                "</html>")) {
+        if (Objects.equals(webpage.html(), """
+                <html>
+                 <head></head>
+                 <body>
+                  <p>You have specified an ID that does not exist in the database. Please back up and try again.</p>
+                 </body>
+                </html>""")) {
             throw new NodeDoesNotExistException();
         }
 
@@ -54,7 +55,7 @@ public class Scraper {
         /*
             Begin scraping advisor data
          */
-        List<ScrapedDissertationData> dissertations = new ArrayList<ScrapedDissertationData>();
+        List<ScrapedDissertationData> dissertations = new ArrayList<>();
 
         Integer i = 5;
 
@@ -124,18 +125,18 @@ public class Scraper {
         /*
             Begin scraping student data
          */
-        List<ScrapedStudentData> students = new ArrayList<ScrapedStudentData>();
+        List<ScrapedStudentData> students = new ArrayList<>();
         if (!content.getElementsByTag("table").isEmpty()) {
             Elements studentList = content.getElementsByTag("table").get(0).getElementsByTag("tr");
             studentList.remove(0);
             for (Element element : studentList) {
                 Integer studentId = Integer.valueOf(element.getElementsByTag("a").get(0).attribute("href").getValue().split("=")[1]);
                 String[] studentNames = element.getElementsByTag("a").get(0).text().split(","); //["LastName", " FirstName"]
-                String studentName = "";
+                StringBuilder studentName = new StringBuilder();
                 for (String namePart : studentNames) {
-                    studentName = namePart.trim() + " " + studentName;
+                    studentName.insert(0, namePart.trim() + " ");
                 }
-                studentName = studentName.trim();
+                studentName = new StringBuilder(studentName.toString().trim());
 
                 String studentUniversity = element.getElementsByTag("td").get(1).text();
 
@@ -148,7 +149,7 @@ public class Scraper {
                 }
 
                 students.add(new ScrapedStudentData(
-                        new Student(studentId, studentName),
+                        new Student(studentId, studentName.toString()),
                         studentUniversity,
                         studentYearofcompletion,
                         studentNumberofdescendents
@@ -160,7 +161,6 @@ public class Scraper {
         /*
             Get number of descendents
          */
-        String descendentstext;
         Integer numberofdescendents = 0;
         if (!students.isEmpty()) {
             String[] split = content.getElementsByTag("table").get(0).nextElementSibling().textNodes().get(0).text().split(" ");

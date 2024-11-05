@@ -1,6 +1,7 @@
 package com.mathsgenealogyapi.node;
 
 import com.mathsgenealogyapi.util.MathsgenealogyapiPostgresqlContainer;
+import com.mathsgenealogyapi.util.TestData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,9 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,6 +93,15 @@ class NodeRepositoryTest {
             logger.info(node.getName() + " " + generationsCount);
         }
         assertTrue(true);
+    }
+
+    @Test
+    public void dataGeneratorTest() throws IOException {
+        
+
+
+        int[][][] data = {{{1,1,1},{2,1,1},{3,1,1},{4,1,1}},
+            {{1,2},{1,3},{1,4},{2,4}}};
     }
 
 

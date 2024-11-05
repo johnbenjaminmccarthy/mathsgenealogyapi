@@ -1,7 +1,6 @@
 package com.mathsgenealogyapi.edge;
 
 import com.mathsgenealogyapi.advisor.Advisor;
-import com.mathsgenealogyapi.dissertation.Dissertation;
 import com.mathsgenealogyapi.node.Node;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,12 +19,12 @@ public class Edge {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "fromNode_id", nullable = false)
+    @JoinColumn(name = "from_node_id", nullable = false)
     private Node fromNode;
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "toNode_id", nullable = false)
+    @JoinColumn(name = "to_node_id", nullable = false)
     private Node toNode;
 
     @OneToMany(mappedBy = "advisorEdge", fetch = FetchType.LAZY)

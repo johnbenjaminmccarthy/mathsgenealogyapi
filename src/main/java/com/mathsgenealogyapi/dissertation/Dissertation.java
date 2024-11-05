@@ -1,10 +1,8 @@
 package com.mathsgenealogyapi.dissertation;
 
 import com.mathsgenealogyapi.advisor.Advisor;
-import com.mathsgenealogyapi.edge.Edge;
 import com.mathsgenealogyapi.node.Node;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

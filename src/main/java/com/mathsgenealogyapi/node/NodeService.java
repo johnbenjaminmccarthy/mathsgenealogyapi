@@ -9,7 +9,6 @@ import com.mathsgenealogyapi.edge.Edge;
 import com.mathsgenealogyapi.scraper.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,20 +23,18 @@ import java.util.Optional;
 @Service
 @Transactional
 public class NodeService {
-    @Autowired
-    NodeRepository nodeRepository;
-    @Autowired
-    DissertationRepository dissertationRepository;
-    @Autowired
-    ConversionService conversionService;
-    @Autowired
-    Scraper scraper;
+    final NodeRepository nodeRepository;
+    final DissertationRepository dissertationRepository;
+    final ConversionService conversionService;
+    final Scraper scraper;
 
     private static final Logger logger = LogManager.getLogger(NodeService.class);
 
-
-    public Node test(Integer id) throws IOException, NodeDoesNotExistException {
-        return scrapeNode(id);
+    public NodeService(NodeRepository nodeRepository, DissertationRepository dissertationRepository, ConversionService conversionService, Scraper scraper) {
+        this.nodeRepository = nodeRepository;
+        this.dissertationRepository = dissertationRepository;
+        this.conversionService = conversionService;
+        this.scraper = scraper;
     }
 
 
@@ -52,10 +49,10 @@ public class NodeService {
         node.setLastupdated(LocalDateTime.now());
         node.setScraped(true);
 
-        List<Dissertation> dissertations = new ArrayList<Dissertation>();
+        List<Dissertation> dissertations = new ArrayList<>();
         node.setDissertations(dissertations);
 
-        List<Edge> advisorEdges = new ArrayList<Edge>();
+        List<Edge> advisorEdges = new ArrayList<>();
         node.setAdvisorEdges(advisorEdges);
 
         for (ScrapedDissertationData dissertationData : scrapedNode.dissertations()) {
@@ -92,7 +89,7 @@ public class NodeService {
             dissertations.add(dissertation);
         }
 
-        List<Edge> studentEdges = new ArrayList<Edge>();
+        List<Edge> studentEdges = new ArrayList<>();
         node.setStudentEdges(studentEdges);
 
         for (ScrapedStudentData studentData : scrapedNode.students()) {

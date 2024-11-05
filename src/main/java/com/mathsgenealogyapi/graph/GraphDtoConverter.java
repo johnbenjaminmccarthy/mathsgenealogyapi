@@ -1,7 +1,5 @@
 package com.mathsgenealogyapi.graph;
 
-import com.mathsgenealogyapi.dissertation.Dissertation;
-import com.mathsgenealogyapi.dissertation.DissertationDto;
 import com.mathsgenealogyapi.edge.EdgeDto;
 import com.mathsgenealogyapi.node.NodeDto;
 import org.springframework.core.convert.ConversionService;

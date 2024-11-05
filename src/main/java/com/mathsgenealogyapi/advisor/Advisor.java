@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(AdvisorId.class)
-@Table(name = "advisors", uniqueConstraints = { @UniqueConstraint(columnNames = { "dissertation_id", "advisorNumber" }) }) //An advisor for a given dissertation must have a unique number (i.e. 1st 2nd 3rd advisor)
+@Table(name = "advisors", uniqueConstraints = { @UniqueConstraint(columnNames = { "dissertation_id", "advisor_number" }) }) //An advisor for a given dissertation must have a unique number (i.e. 1st 2nd 3rd advisor)
 public class Advisor {
 
     @Id
@@ -33,6 +33,6 @@ public class Advisor {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "advisorNumber")
+    @Column(name = "advisor_number")
     private Integer advisorNumber;
 }

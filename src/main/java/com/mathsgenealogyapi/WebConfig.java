@@ -15,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private ConversionService conversionService;
+    private final ConversionService conversionService;
 
     @Autowired
     public WebConfig(@Lazy ConversionService conversionService) {

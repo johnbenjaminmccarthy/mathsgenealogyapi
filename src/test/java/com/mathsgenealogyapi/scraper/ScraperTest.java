@@ -24,6 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -44,10 +45,17 @@ class ScraperTest {
         doAnswer(invocation -> testDocument((Integer)invocation.getArguments()[0])).when(scraper).getDocument(anyInt());
     }
 
-    Document testDocument(Integer id) throws IOException {
+    private Document testDocument(Integer id) throws IOException {
         logger.info("Intercepted scrape connection and returned test file " + id + ".html");
         File testFile = new File("src/test/resources/scrapeTests/" + id + ".html");
-        return Jsoup.parse(testFile, "UTF-8", "http://mathsgenealogy.com/");
+        if (!testFile.exists()) {
+            String webpage = Jsoup.connect("https://www.mathgenealogy.org/id.php?id=" + id).get().html();
+            FileWriter testFileWriter = new FileWriter("src/test/resources/scrapeTests/" + id + ".html");
+            testFileWriter.write(webpage);
+            testFileWriter.close();
+            logger.info("Found test with non-existent test file, downloaded file from genealogy project.");
+        }
+        return Jsoup.parse(testFile, "UTF-8", "http://www.mathsgenealogy.org/");
     }
 
     @Test

@@ -1,8 +1,5 @@
 package com.mathsgenealogyapi.scraper;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 import java.util.Objects;

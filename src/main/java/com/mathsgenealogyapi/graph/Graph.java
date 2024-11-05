@@ -15,20 +15,15 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class Graph {
-    Integer base;
-    List<Node> nodes;
-    List<Edge> edges;
+    private Integer base;
+    private List<Node> nodes;
+    private List<Edge> edges;
+
+    private Integer generationsUp;
+
+    private Integer generationsDown;
 
     public Integer getNumberOfNodes() { return nodes.size(); }
 
     public Integer getNumberOfEdges() { return edges.size(); }
-
-
-    public Integer getGenerationsUp() {
-        return 0;
-    }
-
-    public Integer getGenerationsDown() {
-        return 0;
-    }
 }
