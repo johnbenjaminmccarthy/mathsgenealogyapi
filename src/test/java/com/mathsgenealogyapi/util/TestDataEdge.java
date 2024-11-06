@@ -1,10 +1,8 @@
 package com.mathsgenealogyapi.util;
 
-import com.mathsgenealogyapi.edge.Edge;
-
 public record TestDataEdge(
-        Integer fromId,
-        Integer toId
+        Integer from_node_id,
+        Integer to_node_id
 ) {
 
 }

@@ -18,31 +18,147 @@ import java.util.regex.Pattern;
 
 public record TestData (
     List<TestDataNode> testNodes,
-    List<TestDataEdge> testEdges
+    List<TestDataEdge> testEdges,
+
+    List<TestDataDissertation> testDissertations,
+
+    List<TestDataAdvisor> testAdvisors
 ) {
 
+    /*
+        Takes in an array of data in the form
+        data = {nodes, edges}
+        where
+            nodes = array of node and node={a,b,c} for a=id, b=upToDate boolean (1 or 0), c=scraped boolean (1 or 0).
+            edges = array of edge, edge = {a,b} where a = fromid and b = toid
+
+        Generates random data associated with this data
+     */
     public static TestData fromArray(int[][][] array) {
         List<TestDataNode> testNodes = new ArrayList<>();
         List<TestDataEdge> testEdges = new ArrayList<>();
+        List<TestDataDissertation> testDissertations = new ArrayList<>();
+        List<TestDataAdvisor> testAdvisors = new ArrayList<>();
+
 
         for (int[] node : array[0]) {
-            testNodes.add(new TestDataNode(node[0], node[1] != 0, node[2] != 0));
+            testNodes.add(new TestDataNode(
+                    node[0],
+                    node[1] != 0 ? LocalDateTime.now() : LocalDateTime.now().minusDays(Constants.daysToInvalidateCache + 1),
+                    RandomStringUtils.randomAlphabetic(10),
+                    0,
+                    node[2] != 0));
+            testDissertations.add(new TestDataDissertation(
+                    node[0],
+                    RandomStringUtils.randomAlphabetic(10),
+                    RandomStringUtils.randomAlphabetic(10),
+                    RandomStringUtils.randomAlphabetic(10),
+                    RandomStringUtils.randomAlphabetic(10),
+                    RandomStringUtils.randomAlphabetic(10),
+                    node[0]
+            ));
         }
+        int i = 1;
         for (int[] edge : array[1]) {
             testEdges.add(new TestDataEdge(edge[0], edge[1]));
+            testAdvisors.add(new TestDataAdvisor(
+                    i,
+                    RandomStringUtils.randomAlphabetic(10),
+                    edge[1],
+                    edge[0],
+                    edge[1]
+            ));
+            i++;
         }
-        return new TestData(testNodes, testEdges);
+
+        return new TestData(testNodes, testEdges, testDissertations, testAdvisors);
+    }
+
+    public String bulkInsertSQL() {
+        StringBuilder SQL = new StringBuilder();
+
+        SQL.append("INSERT INTO nodes (genealogy_id, lastupdated, name, numberofdescendents, scraped) VALUES\n");
+        int i = 0;
+        for (TestDataNode node: this.testNodes) {
+            SQL.append(String.format("(%d,'%s','%s',%d,%B)",
+                    node.genealogy_id(),
+                    node.lastupdated().toString(),
+                    node.name(),
+                    node.numberofdescendents(),
+                    node.scraped()));
+            if (i < testNodes.size()-1) {
+                SQL.append(",\n");
+            }
+            else {
+                SQL.append(";\n");
+            }
+            i++;
+        }
+
+        SQL.append("INSERT INTO edges (from_node_id, to_node_id) VALUES\n");
+        i = 0;
+        for (TestDataEdge edge: this.testEdges) {
+            SQL.append(String.format("(%d,%d)",
+                    edge.from_node_id(),
+                    edge.to_node_id()));
+            if (i < this.testEdges.size()-1) {
+                SQL.append(",\n");
+            }
+            else {
+                SQL.append(";\n");
+            }
+            i++;
+        }
+
+        SQL.append("INSERT INTO dissertations (id, dissertationtitle, mscnumber, phdprefix, university, yearofcompletion, node_id) VALUES\n");
+        i = 0;
+        for (TestDataDissertation dissertation: this.testDissertations) {
+            SQL.append(String.format("(%d,'%s','%s','%s','%s','%s',%d)",
+                    dissertation.id(),
+                    dissertation.dissertationtitle(),
+                    dissertation.mscnumber(),
+                    dissertation.phdprefix(),
+                    dissertation.university(),
+                    dissertation.yearofcompletion(),
+                    dissertation.node_id()));
+            if (i < this.testDissertations.size()-1) {
+                SQL.append(",\n");
+            }
+            else {
+                SQL.append(";\n");
+            }
+            i++;
+        }
+
+        SQL.append("INSERT INTO advisors (dissertation_id, advisor_edge_from_node_id, advisor_edge_to_node_id, name, advisor_number) VALUES\n");
+        i = 0;
+        for (TestDataAdvisor advisor: this.testAdvisors) {
+            SQL.append(String.format("(%d,%d,%d,'%s',%d)",
+                    advisor.dissertation_id(),
+                    advisor.advisor_edge_from_node_id(),
+                    advisor.advisor_edge_to_node_id(),
+                    advisor.name(),
+                    advisor.advisor_number()));
+            if (i < this.testAdvisors.size()-1) {
+                SQL.append(",\n");
+            }
+            else {
+                SQL.append(";\n");
+            }
+            i++;
+        }
+        return SQL.toString();
     }
 
     private List<TestDataEdge> edgesWithFromId(int id) {
-        return testEdges.stream().filter(it -> it.fromId() == id).toList();
+        return testEdges.stream().filter(it -> it.from_node_id() == id).toList();
     }
 
     private List<TestDataEdge> edgesWithToId(int id) {
-        return testEdges.stream().filter(it -> it.toId() == id).toList();
+        return testEdges.stream().filter(it -> it.to_node_id() == id).toList();
     }
 
-    public List<Node> generateEntities() { // Creates data to be persisted to the database from simple test data
+    /*public List<Node> generateEntities() { // Creates data to be persisted to the database from simple test data
         Map<Integer, Node> nodes = new HashMap<>();
         Map<Integer, List<Edge>> advisorEdges = new HashMap<>(); //Key: childId, Value: Edges corresponding to parents of child
         Map<Integer, List<Edge>> studentEdges = new HashMap<>(); //Key: parentId, Value: Edges corresponding to children of parent
@@ -119,6 +235,6 @@ public record TestData (
         dissertation.setPhdprefix(RandomStringUtils.randomAlphabetic(10));
         dissertation.setYearofcompletion(RandomStringUtils.randomAlphabetic(10));
         return dissertation;
-    }
+    }*/
 
 }
