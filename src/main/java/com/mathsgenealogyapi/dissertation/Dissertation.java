@@ -19,7 +19,7 @@ public class Dissertation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "node_id", nullable = false)
     private Node node;
 

@@ -4,10 +4,14 @@ import com.mathsgenealogyapi.util.MathsgenealogyapiPostgresqlContainer;
 import com.mathsgenealogyapi.util.TestData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.data.util.Pair;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +22,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 
-@DataJpaTest
+//@DataJpaTest
+@SpringBootTest
 @ActiveProfiles("medium")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
@@ -33,10 +37,23 @@ class NodeRepositoryTest {
 
     @Container
     public static PostgreSQLContainer<MathsgenealogyapiPostgresqlContainer> postgreSQLContainer = MathsgenealogyapiPostgresqlContainer.getInstance();
-            //.withInitScript("database/testData.sql");
 
     @Autowired
     NodeRepository repository;
+
+    @BeforeEach
+    void cleanDatabase(TestInfo testInfo) {
+        repository.deleteAll();
+        repository.flush();
+        logger.info("Cleaned database before running " + testInfo.getDisplayName() + " test.");
+    }
+
+    //@Transactional
+    void setUpWithData(int[][][] data) {//TODO: Saving entities in wrong order because edge for Node 1 depends on Node 2 but Node 2 hasn't been saved yet, etc.
+        List<Node> entities = TestData.fromArray(data).generateEntities();
+        repository.saveAll(entities);
+        logger.info("Inserted new test data.");
+    }
 
     @Test
     @Transactional
@@ -95,16 +112,36 @@ class NodeRepositoryTest {
         assertTrue(true);
     }
 
+
     @Test
-    public void dataGeneratorTest() throws IOException {
-        
+    public void zeroGenerationsUpOrDown() {
+        int[][][] data = {{{1,1,1},{2,1,1},{3,1,1}},
+                {{1,2},{2,3}}};
+        setUpWithData(data);
+
+        List<Pair<Node, Integer>> output = repository.getNodes(2, 0, 0);
+        assertEquals(1, output.size());
+    }
+
+    @Autowired ConversionService conversionService;
+    @Test
+    public void simpleTestData() {
+        int[][][] data = {{{1,1,1},{2,1,1}},
+                {}};
+
+        List<Node> entities = TestData.fromArray(data).generateEntities();
+
+        for (Node node: entities) {
+            logger.debug(conversionService.convert(node, NodeDto.class).toString());
+        }
 
 
-        int[][][] data = {{{1,1,1},{2,1,1},{3,1,1},{4,1,1}},
-            {{1,2},{1,3},{1,4},{2,4}}};
+        setUpWithData(data);
+
     }
 
 
 
 
 }
+
