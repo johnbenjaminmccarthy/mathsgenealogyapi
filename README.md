@@ -37,6 +37,11 @@ For example, the query
 
 returns a partial directed graph of the Maths Genealogy family tree centred at Node 293462 (John Benjamin McCarthy): (Student data has been removed for conciseness, but a full list of students and their IDs is returned for each node up or down the tree)
 
+![image](https://github.com/user-attachments/assets/2e1d56ce-e4f2-428b-bfb7-9bf8fcf7f7ba)
+
+(A graphical representation of the tree)
+
+
 ```
 {
     "base": 293462,
