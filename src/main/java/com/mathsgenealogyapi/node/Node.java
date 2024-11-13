@@ -67,7 +67,7 @@ public class Node {
     @Column(name = "genealogy_id", unique = true)
     private Integer id; //The genealogy id on https://genealogy.math.ndsu.nodak.edu/
 
-    @Column(name = "name")
+    @Column(name = "name", columnDefinition = "text")
     private String name;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "node")

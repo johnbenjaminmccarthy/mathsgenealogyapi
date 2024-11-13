@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -41,14 +42,18 @@ public class GraphService {
         Set<Edge> edges = new HashSet<>();
         Set<Node> nodes = new HashSet<>();
         for (Pair<Node, Integer> node: nodesWithGeneration) {
+            nodes.add(node.getFirst());
+        }
+        Set<Integer> nodeIds = nodes.stream().map(Node::getId).collect(Collectors.toSet());
+
+        for (Pair<Node, Integer> node: nodesWithGeneration) {
             Integer generation = node.getSecond();
             if (generation >= 0) {
-                edges.addAll(node.getFirst().getAdvisorEdges());
+                edges.addAll(node.getFirst().getAdvisorEdges().stream().filter(it -> nodeIds.contains(it.getFromNode().getId())).toList());
             }
             if (generation <= 0) {
-                edges.addAll(node.getFirst().getStudentEdges());
+                edges.addAll(node.getFirst().getStudentEdges().stream().filter(it -> nodeIds.contains(it.getToNode().getId())).toList());
             }
-            nodes.add(node.getFirst());
         }
         return new Graph(baseId, nodes.stream().toList(), edges.stream().toList(), maximumReachedGeneration, minimumReachedGeneration);
     }

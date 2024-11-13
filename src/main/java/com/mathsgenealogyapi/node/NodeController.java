@@ -40,6 +40,10 @@ public class NodeController {
             logger.info("Requested node " + id + " does not exist in the maths genealogy project so request failed with 404");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "A node on the genealogy family tree with id " + id + " does not exist.");
         }
+        catch (Exception e) {
+            logger.error("Exception: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
     }
 
 

@@ -65,14 +65,17 @@ public class NodeService {
             for (ScrapedAdvisorData advisorData : dissertationData.advisors()) {
                 Advisor advisor = new Advisor();
                 Node advisorNode = getOrCreateNode(advisorData.advisorId(), advisorData.name());
-                Edge advisorEdge = new Edge(advisorNode, node);
+                Edge advisorEdge = advisorEdges.stream().filter(it -> it.getFromNode().getId().equals(advisorNode.getId()) && it.getToNode().getId().equals(node.getId())).findFirst().orElse(new Edge(advisorNode, node));
+
 
                 advisor.setDissertation(dissertation);
                 advisor.setAdvisorEdge(advisorEdge);
                 advisor.setName(advisorData.name());
                 advisor.setAdvisorNumber(advisorData.advisorNumber());
 
-                advisorEdges.add(advisorEdge);
+                if (advisorEdges.stream().noneMatch(it -> it == advisorEdge)) {
+                    advisorEdges.add(advisorEdge);
+                }
 
                 advisors.add(advisor);
             }

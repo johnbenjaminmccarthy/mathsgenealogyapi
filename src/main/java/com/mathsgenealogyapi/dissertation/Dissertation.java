@@ -23,19 +23,19 @@ public class Dissertation {
     @JoinColumn(name = "node_id", nullable = false)
     private Node node;
 
-    @Column(name = "phdprefix")
+    @Column(name = "phdprefix", columnDefinition = "text")
     private String phdprefix;
 
-    @Column(name = "university")
+    @Column(name = "university", columnDefinition = "text")
     private String university;
 
-    @Column(name = "yearofcompletion")
+    @Column(name = "yearofcompletion", columnDefinition = "text")
     private String yearofcompletion;
 
-    @Column(name = "dissertationtitle")
+    @Column(name = "dissertationtitle", columnDefinition = "text")
     private String dissertationtitle;
 
-    @Column(name = "mscnumber")
+    @Column(name = "mscnumber", columnDefinition = "text")
     private String mscnumber; //Mathematics Subject Classification number in MSC202
 
     @OneToMany(mappedBy = "dissertation", fetch = FetchType.EAGER, cascade = CascadeType.ALL)

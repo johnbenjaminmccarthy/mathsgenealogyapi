@@ -30,7 +30,7 @@ public class Advisor {
     })
     private Edge advisorEdge;
 
-    @Column(name = "name")
+    @Column(name = "name", columnDefinition = "text")
     private String name;
 
     @Column(name = "advisor_number")

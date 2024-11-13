@@ -27,7 +27,7 @@ public class Edge {
     @JoinColumn(name = "to_node_id", nullable = false)
     private Node toNode;
 
-    @OneToMany(mappedBy = "advisorEdge", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "advisorEdge", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Advisor> advisors;
 
     public Edge(Node fromNode, Node toNode) {
