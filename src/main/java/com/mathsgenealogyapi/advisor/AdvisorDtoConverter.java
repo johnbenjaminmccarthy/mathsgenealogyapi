@@ -8,7 +8,7 @@ public class AdvisorDtoConverter implements Converter<Advisor, AdvisorDto> {
     @Override
     public AdvisorDto convert(Advisor from) {
         return new AdvisorDto(
-                from.getAdvisorEdge().getFromNode().getId(),
+                from.getAdvisorId(),
                 from.getName(),
                 from.getAdvisorNumber()
         );

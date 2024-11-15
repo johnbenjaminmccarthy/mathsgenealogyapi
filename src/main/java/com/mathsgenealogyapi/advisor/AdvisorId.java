@@ -16,7 +16,7 @@ import java.util.Objects;
 @Setter
 public class AdvisorId implements Serializable {
     private Dissertation dissertation;
-    private Edge advisorEdge;
+    private Integer advisorId;
 
     @Override
     public boolean equals(Object obj) {
@@ -27,12 +27,12 @@ public class AdvisorId implements Serializable {
             return false;
         }
         else {
-            return (Objects.equals(ob.getDissertation().getId(), this.dissertation.getId()) && Objects.equals(ob.getAdvisorEdge(), this.advisorEdge));
+            return (Objects.equals(ob.getDissertation().getId(), this.dissertation.getId()) && Objects.equals(ob.getAdvisorId(), this.advisorId));
         }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDissertation().getId(), this.advisorEdge);
+        return Objects.hash(this.getDissertation().getId(), this.advisorId);
     }
 }

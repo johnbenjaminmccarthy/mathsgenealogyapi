@@ -23,12 +23,8 @@ public class Advisor {
     private Dissertation dissertation;
 
     @Id
-    @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "advisor_edge_from_node_id", nullable = false),
-            @JoinColumn(name = "advisor_edge_to_node_id", nullable = false)
-    })
-    private Edge advisorEdge;
+    @Column(name="advisor_id")
+    private Integer advisorId;
 
     @Column(name = "name", columnDefinition = "text")
     private String name;

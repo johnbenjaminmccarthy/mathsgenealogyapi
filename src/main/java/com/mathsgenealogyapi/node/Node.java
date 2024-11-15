@@ -70,7 +70,7 @@ public class Node {
     @Column(name = "name", columnDefinition = "text")
     private String name;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "node")
+    @OneToMany(mappedBy = "node", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Dissertation> dissertations;
 
     @OneToMany(mappedBy = "fromNode", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

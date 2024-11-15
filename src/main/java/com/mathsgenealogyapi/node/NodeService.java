@@ -65,22 +65,21 @@ public class NodeService {
             for (ScrapedAdvisorData advisorData : dissertationData.advisors()) {
                 Advisor advisor = new Advisor();
                 Node advisorNode = getOrCreateNode(advisorData.advisorId(), advisorData.name());
+
                 Edge advisorEdge = advisorEdges.stream().filter(it -> it.getFromNode().getId().equals(advisorNode.getId()) && it.getToNode().getId().equals(node.getId())).findFirst().orElse(new Edge(advisorNode, node));
 
 
                 advisor.setDissertation(dissertation);
-                advisor.setAdvisorEdge(advisorEdge);
+                advisor.setAdvisorId(advisorData.advisorId());
                 advisor.setName(advisorData.name());
                 advisor.setAdvisorNumber(advisorData.advisorNumber());
 
-                if (advisorEdges.stream().noneMatch(it -> it == advisorEdge)) {
+                if (advisorEdges.stream().noneMatch(it -> it.equals(advisorEdge))) {
                     advisorEdges.add(advisorEdge);
                 }
 
                 advisors.add(advisor);
             }
-
-
 
             dissertation.setPhdprefix(dissertationData.phdprefix());
             dissertation.setUniversity(dissertationData.university());
@@ -92,13 +91,18 @@ public class NodeService {
             dissertations.add(dissertation);
         }
 
+
         List<Edge> studentEdges = new ArrayList<>();
         node.setStudentEdges(studentEdges);
 
         for (ScrapedStudentData studentData : scrapedNode.students()) {
             Node studentNode = getOrCreateNode(studentData.student().id(), studentData.student().name());
-            Edge studentEdge = new Edge(node, studentNode);
-            studentEdges.add(studentEdge);
+            Edge studentEdge = studentEdges.stream().filter(it -> it.getFromNode().getId().equals(node.getId()) && it.getToNode().getId().equals(studentNode.getId())).findFirst().orElse(new Edge(node, studentNode));
+
+            if (advisorEdges.stream().noneMatch(it -> it.equals(studentEdge))) {
+                studentEdges.add(studentEdge);
+            }
+
         }
 
         return node;
